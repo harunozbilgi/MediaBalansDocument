@@ -9,6 +9,7 @@ public interface IProductRepository
     Task<CustomResponse<Product>> GetProductByIdAsync(Guid productId);
     Task<CustomResponse<Product>> AddProductAsync(Product product);
     Task<CustomResponse<bool>> UpdateProductAsync(Product product);
+    Task<CustomResponse<bool>> RemoveProductAsync(Guid productId);
     Task AddProductFileAsync(ProductFile product);
     Task<CustomResponse<bool>> RemoveProductFileAsync(Guid productId);
 

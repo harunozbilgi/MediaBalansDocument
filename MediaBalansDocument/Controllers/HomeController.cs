@@ -44,7 +44,7 @@ public class HomeController : Controller
         var new_image_url = "";
         if (product.File != null)
         {
-            var response = await _documentRepository.AddDocumentAsync(new FileInput() { File = product.File, Path = "Product/" });
+            var response = await _documentRepository.AddDocumentAsync(new FileInput() { File = product.File, Path = "file/Product/" });
             new_image_url += response.Data;
         }
         var add_product = new Product()
@@ -62,7 +62,7 @@ public class HomeController : Controller
                 {
                     foreach (var file in product.Files)
                     {
-                        var response = await _documentRepository.AddDocumentAsync(new FileInput() { File = file, Path = "Product/" });
+                        var response = await _documentRepository.AddDocumentAsync(new FileInput() { File = file, Path = "file/Product/" });
                         list_new_file.Add(response.Data);
                     }
                 }
@@ -105,7 +105,7 @@ public class HomeController : Controller
 
         if (product.File != null)
         {
-            var response = await _documentRepository.UpdateDocumentAsync(product.PictureUrl, new FileInput() { File = product.File, Path = "Product/" });
+            var response = await _documentRepository.UpdateDocumentAsync(product.PictureUrl, new FileInput() { File = product.File, Path = "file/Product/" });
             product.PictureUrl += response.Data;
 
         }
@@ -137,7 +137,7 @@ public class HomeController : Controller
                         {
                             foreach (var file in product.Files)
                             {
-                                var response = await _documentRepository.AddDocumentAsync(new FileInput() { File = file, Path = "Product/" });
+                                var response = await _documentRepository.AddDocumentAsync(new FileInput() { File = file, Path = "file/Product/" });
                                 list_new_file.Add(response.Data);
                             }
                         }
@@ -154,6 +154,23 @@ public class HomeController : Controller
             }
         }
         return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        if (id == Guid.Empty) return BadRequest();
+        var result = await _productRepository.GetProductByIdAsync(id);
+        if (result.IsSuccessful)
+        {
+            await _documentRepository.RemoveDocumentAsync(result.Data.PictureUrl);
+            foreach (var item in result.Data.ProductFiles)
+            {
+                await _documentRepository.RemoveDocumentAsync(item.PictureUrl);
+            }
+            await _productRepository.RemoveProductAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
+        return NotFound();
     }
 
     #endregion

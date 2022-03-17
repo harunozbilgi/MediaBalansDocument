@@ -46,6 +46,15 @@ public class ProductService : IProductRepository
         return CustomResponse<List<Product>>.Success(result);
     }
 
+    public async Task<CustomResponse<bool>> RemoveProductAsync(Guid productId)
+    {
+        if (productId == Guid.Empty) throw new ArgumentNullException(nameof(productId));
+        var response = await _context.Products.Where(x => x.Id == productId).AsNoTracking().FirstOrDefaultAsync();
+        _context.Products.Remove(response);
+        await _context.SaveChangesAsync();
+        return CustomResponse<bool>.Success(true);
+    }
+
     public async Task<CustomResponse<bool>> RemoveProductFileAsync(Guid productId)
     {
         var result = await _context.ProductFiles.Where(x => x.ProductId == productId).ToListAsync();
