@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Edit";
+}
+@model ProductUpdateInput
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Urun Guncele</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-controller="Home" asp-action="Edit" enctype="multipart/form-data" asp-antiforgery="true">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="PictureUrl" />
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input type="text" class="form-control" asp-for="Name" />
+                            <span class="text-danger" asp-validation-for="Name"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="File" class="form-label"></label>
+                            @if (!string.IsNullOrEmpty(Model.PictureUrl))
+                            {
+                                <div class="my-2">
+                                    <img class="img-thumbnail" src="@await Component.InvokeAsync("Image", new { FileCode = Model.PictureUrl  })">
+                                </div>
+                            }
+                            <input type="file" class="form-control" asp-for="File" />
+                            <span class="text-danger" asp-validation-for="File"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Files" class="form-label"></label>
+                            @if (Model.ProductFiles != null)
+                            {
+                                @foreach (var item in Model.ProductFiles)
+                                {
+                                    <div class="my-2">
+                                        <img class="img-thumbnail" src="@await Component.InvokeAsync("Image", new { FileCode = item.PictureUrl  })">
+                                    </div>
+                                }
+                            }
+                            <input type="file" class="form-control" asp-for="Files" multiple />
+                            <span class="text-danger" asp-validation-for="Files"></span>
+                        </div>
+                        <button type="submit" class="btn-primary">Gonder</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
